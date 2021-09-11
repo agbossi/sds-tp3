@@ -3,12 +3,12 @@ import java.util.Objects;
 public class Event implements Comparable<Event> {
 
     private final double time;
-    private final Collideable a;
-    private final Collideable b;
+    private final Particle a;
+    private final Particle b;
     private final CollisionType type;
     private boolean isValid;
 
-    public Event(double t, Collideable a, Collideable b, CollisionType type) {
+    public Event(double t, Particle a, Particle b, CollisionType type) {
         this.time = t;
         this.a = a;
         this.b = b;
@@ -18,9 +18,9 @@ public class Event implements Comparable<Event> {
 
     public double getTime() { return time; }
 
-    public Collideable getA() { return a; }
+    public Particle getA() { return a; }
 
-    public Collideable getB() { return b; }
+    public Particle getB() { return b; }
 
     public CollisionType getType() { return type; }
 

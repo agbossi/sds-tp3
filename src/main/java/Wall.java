@@ -1,4 +1,4 @@
-public class Wall  implements Collideable {
+public class Wall {
     private WallType type;
 
     public Wall(WallType type) {
@@ -7,15 +7,5 @@ public class Wall  implements Collideable {
 
     public WallType getWallType() {
         return type;
-    }
-
-    @Override
-    public double collides(Collideable c) {
-        return 0;
-    }
-
-    @Override
-    public void bounce(Collideable c) {
-
     }
 }

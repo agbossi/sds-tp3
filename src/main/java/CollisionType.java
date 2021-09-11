@@ -1,6 +1,6 @@
 public enum CollisionType {
-    horizontalWall,
-    verticalWall,
-    particles,
-    reDraw
+    HORIZONTAL_WALL,
+    VERTICAL_WALL,
+    PARTICLE,
+    RE_DRAW
 }

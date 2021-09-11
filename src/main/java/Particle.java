@@ -1,16 +1,92 @@
 import java.util.Objects;
 
-public class Particle implements Collideable{
+public class Particle {
+
     private final int id;
+    private int collisionCount;
     private final double mass;
     private final double radius;
     private final State state;
+    public static final double UNREACHABLE = 1;
 
     public Particle(int id, double x, double y, double radius, double mass, double vx, double vy) {
         this.id = id;
         this.radius = radius;
         this.mass = mass;
         this.state = new State(x, y, vx, vy);
+        this.collisionCount = 0;
+    }
+
+    public double collides(Particle p) {
+        State p2 = p.getState();
+        double dx = p2.getX() - state.getX();
+        double dy = p2.getY() - state.getY();
+
+        double dvx = (p2.getVX() - state.getVX());
+        double dvy = (p2.getVY() - state.getVY());
+
+        double dvdv = dvx*dvx + dvy*dvy;
+        double drdr = (p2.getX() - state.getX()) * (p2.getX() - state.getX())
+                + (p2.getY() - state.getY()) * (p2.getY() - state.getY());
+        double dvdr = dvx*dx + dvy*dy;
+        double sigma = p.getRadius() + this.radius;
+
+        double d = dvdr*dvdr - (dvx*dvx + dvy*dvy)*(drdr - sigma*sigma);
+
+        return -(dvdr+Math.sqrt(d)) / (dvdv);
+    }
+
+    public void bounce(Particle p) {
+
+        double sigma = p.getRadius() + this.radius;
+
+        State p2 = p.getState();
+        double dx = p2.getX() - state.getX();
+        double dy = p2.getY() - state.getY();
+
+        double dvx = (p2.getVX() - state.getVX());
+        double dvy = (p2.getVY() - state.getVY());
+
+        double dvdr = dvx*dx + dvy*dy;
+        double j = (2 * mass * p.getMass() * dvdr)/ (sigma*(mass*p.getMass()));
+        double jx = (j*dx)/sigma;
+        double jy = (j*dy)/sigma;
+
+        state.vx = state.vx + jx / mass;
+        state.vy = state.vy + jy / mass;
+
+        p.getState().vx = p.getState().vx + jx / p.getMass();
+        p.getState().vy = p.getState().vy + jy / p.getMass();
+    }
+
+    public double collidesX(double boardLength){
+        if (state.getVX() > 0){
+            return (boardLength - radius - state.getX()) / state.getVX();
+        }else if(state.getVX() < 0){
+            return (radius - state.getX()) / state.getVX();
+        }
+
+        return UNREACHABLE;
+    }
+
+    public double collidesY(double boardLength) {
+        if (state.getVY() > 0){
+            return (boardLength - radius - state.getY()) / state.getVY();
+        }else if(state.getVY() < 0){
+            return (radius - state.getY()) / state.getVY();
+        }
+
+        return UNREACHABLE;
+    }
+
+    public void bounceX(){
+        state.vx = -state.vx;
+        collisionCount++;
+    }
+
+    public void bounceY(){
+        state.vy = -state.vy;
+        collisionCount++;
     }
 
     private double distanceFromAxis(double ax1, double ax2, double L){
@@ -26,11 +102,16 @@ public class Particle implements Collideable{
 
 
     // Getters
+
+    public CollisionType getType() {
+        return CollisionType.PARTICLE;
+    }
+
     public int getId() { return id; }
     public State getState() { return state; }
     public double getRadius() { return radius; }
     public double getMass() { return mass; }
-
+    public int getCollisionCount(){ return collisionCount; }
 
     @Override
     public boolean equals(Object o) {
@@ -43,16 +124,6 @@ public class Particle implements Collideable{
     @Override
     public int hashCode() {
         return Objects.hash(id, radius);
-    }
-
-    @Override
-    public double collides(Collideable c) {
-        return 0;
-    }
-
-    @Override
-    public void bounce(Collideable c) {
-
     }
 
 //    @Override
@@ -72,8 +143,8 @@ public class Particle implements Collideable{
 
     public static class State{
 
-        private final double x, y;
-        private final double vx, vy;
+        private double x, y;
+        private double vx, vy;
 
         public State(double x, double y, double vx, double vy) {
             this.x = x;
