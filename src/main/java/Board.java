@@ -2,11 +2,12 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class Board {
 
     private final double L;
-    private List<Particle> particles;
+    private final List<Particle> particles;
     private final PriorityQueue<Event> events;
     private final Set<Event> collisions;
 
@@ -17,68 +18,87 @@ public class Board {
         this.collisions = new HashSet<>();
     }
 
-    public static Board getRandomBoardFile(int n, double l, double minR, double minMass, double maxR, double maxMass, double maxV) {
+    public static Board getRandomBoard(int n, double l, double minR, double minMass, double maxR, double maxMass, double maxV, boolean file) {
 
         List<Particle> particles = new ArrayList<>();
 
+        // Big particle
+        double x = l/2;
+        double y = l/2;
+        double vx = 0;
+        double vy = 0;
+
         try {
-            FileWriter st = new FileWriter("src/main/resources/newStatic.txt",false);
-            BufferedWriter stBuffer = new BufferedWriter(st);
-            FileWriter dyn = new FileWriter("src/main/resources/newDynamic.txt",false);
-            BufferedWriter dynBuffer = new BufferedWriter(dyn);
+            FileWriter st=null, dyn=null;
+            BufferedWriter stBuffer=null, dynBuffer=null;
 
-            stBuffer.write(String.valueOf(n));
-            stBuffer.newLine();
-            stBuffer.write(String.valueOf(l));
-            stBuffer.newLine();
+            if(file) {
+                st = new FileWriter("src/main/resources/newStatic.txt",false);
+                stBuffer = new BufferedWriter(st);
+                dyn = new FileWriter("src/main/resources/newDynamic.txt",false);
+                dynBuffer = new BufferedWriter(dyn);
 
-            dynBuffer.write("t0");
-            dynBuffer.newLine();
-                       
-            double x, y, vx, vy, mass, radius;
-            
-            // Big particle
-            x = l/2;
-            y = l/2;
-            double v = 0;
-
-
-            int i;
-            for (i = 0; i < n; i++) {
-                x = Math.random() * l;
-                y = Math.random() * l;
-                v = Math.random() * maxV;
-
-                dynBuffer.write(String.valueOf(x));
-                dynBuffer.write(" ");
-                dynBuffer.write(String.valueOf(y));
-                dynBuffer.write(" ");
-                dynBuffer.write(String.valueOf(vx));
-                dynBuffer.write(" ");
-                dynBuffer.write(String.valueOf(vy));
-                dynBuffer.newLine();
-
-                stBuffer.write(String.valueOf(radius));
-                stBuffer.write(" ");
-                stBuffer.write(String.valueOf(mass));
+                stBuffer.write(String.valueOf(n+1));
+                stBuffer.newLine();
+                stBuffer.write(String.valueOf(l));
                 stBuffer.newLine();
 
-                particles.add(new Particle(i, x, y, radius, mass, vx, vy));
+                dynBuffer.write("t0");
+                dynBuffer.newLine();
+
+                FileManager.particleInputFiles(x,y,vx,vy,maxMass,maxR,stBuffer,dynBuffer);
             }
 
-            stBuffer.flush();
-            dynBuffer.flush();
-            stBuffer.close();
-            dynBuffer.close();
-            st.close();
-            dyn.close();
-            System.out.println("Nuevo tablero en newStatic.txt y newDynamic.txt");
+            particles.add(new Particle(0, x, y, minR, minMass, vx, vy));
+
+            // Little particles
+            double v, theta;
+            Random random = new Random();
+            for (int i = 1; i <= n; i++) {
+                do {
+                    x = ThreadLocalRandom.current().nextDouble(minR, l-minR);
+                    y = ThreadLocalRandom.current().nextDouble(minR, l-minR);
+                } while(overlap(x, y, minR, particles));
+                v = random.nextDouble() * maxV;
+                theta = Math.random() * 2 * Math.PI;
+                vx = v * Math.cos(theta) * (random.nextBoolean() ? -1:1);
+                vy = v * Math.sin(theta) * (random.nextBoolean() ? -1:1);
+
+                if(file) {
+                    FileManager.particleInputFiles(x,y,vx,vy,minMass,minR,stBuffer,dynBuffer);
+                }
+
+                particles.add(new Particle(i, x, y, minR, minMass, vx, vy));
+            }
+
+            if(file) {
+                stBuffer.flush();
+                dynBuffer.flush();
+                stBuffer.close();
+                dynBuffer.close();
+                st.close();
+                dyn.close();
+                System.out.println("Nuevo tablero en newStatic.txt y newDynamic.txt");
+            }
+
         } catch (IOException e) {
             System.out.println("Ha ocurrido un error.");
             e.printStackTrace();
         }
 
-        return new Board(l, m, particles);
+        return new Board(l, particles);
+    }
+
+    private static boolean overlap(double x, double y, double r, List<Particle> particles) {
+        if(particles.size() == 0) {
+            return false;
+        }
+        for (Particle particle : particles) {
+            if((Math.pow(particle.getState().getX() - x, 2) + Math.pow(particle.getState().getY() - y, 2)) <= Math.pow(particle.getRadius() + r, 2)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public double getL() {
@@ -90,20 +110,5 @@ public class Board {
     public List<Particle> getParticles() {
         return particles;
     }
-
-/*
-    @Override
-    public String toString() {
-        StringBuilder b = new StringBuilder(M*M);
-        b.append("Board:\n");
-        for (int i = 0; i < M * M; i++) {
-            b.append(cells.get(i).size()).append(" ");
-            if (i % M == M-1){
-                b.append("\n");
-            }
-        }
-        return b.toString();
-    }
-*/
 
 }
