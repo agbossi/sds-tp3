@@ -49,7 +49,7 @@ public class Board {
                 FileManager.particleInputFiles(x,y,vx,vy,maxMass,maxR,stBuffer,dynBuffer);
             }
 
-            particles.add(new Particle(0, x, y, minR, minMass, vx, vy));
+            particles.add(new Particle(0, x, y, maxR, maxMass, vx, vy));
 
             // Little particles
             double v, theta;
