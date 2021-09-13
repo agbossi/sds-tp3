@@ -3,24 +3,33 @@ import java.util.Objects;
 public class Event implements Comparable<Event> {
 
     private final double time;
-    private final Particle a;
-    private final Particle b;
+    private final Particle p1;
+    private final Particle p2;
     private final CollisionType type;
     private boolean isValid;
 
-    public Event(double t, Particle a, Particle b, CollisionType type) {
+    public Event(double t, Particle p1, Particle p2, CollisionType type) {
         this.time = t;
-        this.a = a;
-        this.b = b;
+        this.p1 = p1;
+        this.p2 = p2;
         this.type = type;
         this.isValid = true;
     }
 
+    public void collide(){
+        if (type == CollisionType.PARTICLE){
+            p1.bounce(p2, time);
+        }else if (type == CollisionType.HORIZONTAL_WALL){
+            p1.bounceY();
+        }else if(type == CollisionType.VERTICAL_WALL){
+            p1.bounceX();
+        }
+    }
     public double getTime() { return time; }
 
-    public Particle getA() { return a; }
+    public Particle getP1() { return p1; }
 
-    public Particle getB() { return b; }
+    public Particle getP2() { return p2; }
 
     public CollisionType getType() { return type; }
 
@@ -31,12 +40,12 @@ public class Event implements Comparable<Event> {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Event event = (Event) o;
-        return Double.compare(event.getTime(), getTime()) == 0 && isValid() == event.isValid() && getA().equals(event.getA()) && getB().equals(event.getB()) && getType() == event.getType();
+        return Double.compare(event.getTime(), getTime()) == 0 && isValid() == event.isValid() && getP1().equals(event.getP1()) && getP2().equals(event.getP2()) && getType() == event.getType();
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getTime(), getA(), getB(), getType());
+        return Objects.hash(getTime(), getP1(), getP2(), getType());
     }
 
     @Override

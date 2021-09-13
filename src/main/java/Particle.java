@@ -26,37 +26,36 @@ public class Particle {
         double dvy = (p2.getVY() - state.getVY());
 
         double dvdv = dvx*dvx + dvy*dvy;
-        double drdr = (p2.getX() - state.getX()) * (p2.getX() - state.getX())
-                + (p2.getY() - state.getY()) * (p2.getY() - state.getY());
+        double drdr = dx*dx + dy*dy;
         double dvdr = dvx*dx + dvy*dy;
         double sigma = p.getRadius() + this.radius;
 
         double d = dvdr*dvdr - (dvx*dvx + dvy*dvy)*(drdr - sigma*sigma);
 
-        return -(dvdr+Math.sqrt(d)) / (dvdv);
+        return -((dvdr+Math.sqrt(d)) / (dvdv));
     }
 
-    public void bounce(Particle p) {
+    public void bounce(Particle p, double dt) {
 
         double sigma = p.getRadius() + this.radius;
 
         State p2 = p.getState();
-        double dx = p2.getX() - state.getX();
-        double dy = p2.getY() - state.getY();
+        double dx = p.updateX(dt) - updateX(dt);
+        double dy = p.updateY(dt) - updateY(dt);
 
         double dvx = (p2.getVX() - state.getVX());
         double dvy = (p2.getVY() - state.getVY());
 
         double dvdr = dvx*dx + dvy*dy;
-        double j = (2 * mass * p.getMass() * dvdr)/ (sigma*(mass*p.getMass()));
+        double j = (2 * mass * p.getMass() * dvdr)/ (sigma*(mass+p.getMass()));
         double jx = (j*dx)/sigma;
         double jy = (j*dy)/sigma;
 
         state.vx = state.vx + jx / mass;
         state.vy = state.vy + jy / mass;
 
-        p.getState().vx = p.getState().vx + jx / p.getMass();
-        p.getState().vy = p.getState().vy + jy / p.getMass();
+        p.getState().vx = p.getState().vx - jx / p.getMass();
+        p.getState().vy = p.getState().vy - jy / p.getMass();
     }
 
     public double collidesX(double boardLength){
@@ -87,6 +86,16 @@ public class Particle {
     public void bounceY(){
         state.vy = -state.vy;
         collisionCount++;
+    }
+
+    public double updateX(double dt){
+        state.x = state.x + state.vx * dt;
+        return state.x;
+    }
+
+    public double updateY(double dt){
+        state.y = state.y + state.vy * dt;
+        return state.y;
     }
 
     private double distanceFromAxis(double ax1, double ax2, double L){

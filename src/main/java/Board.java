@@ -101,6 +101,24 @@ public class Board {
         return false;
     }
 
+    public void calculateEvents(){
+
+        for (int i = 0; i < particles.size(); i++) {
+            Particle p1 = particles.get(i);
+            for (int j = i+1; j < particles.size(); j++) {
+                Particle p2 = particles.get(j);
+                events.add(new Event(p1.collides(p2), p1, p2, CollisionType.PARTICLE));
+            }
+            events.add(new Event(p1.collidesX(L), p1, null, CollisionType.VERTICAL_WALL));
+            events.add(new Event(p1.collidesY(L), p1, null, CollisionType.HORIZONTAL_WALL));
+        }
+    }
+
+    public void executeEvent(){
+        // Siempre hay un evento para correr
+        events.poll().collide();
+    }
+
     public double getL() {
         return L;
     }
