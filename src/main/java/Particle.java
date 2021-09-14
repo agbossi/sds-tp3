@@ -32,16 +32,19 @@ public class Particle {
 
         double d = dvdr*dvdr - (dvx*dvx + dvy*dvy)*(drdr - sigma*sigma);
 
+        if (d < 0 || dvdr >= 0){
+            return Double.MAX_VALUE;
+        }
         return -((dvdr+Math.sqrt(d)) / (dvdv));
     }
 
-    public void bounce(Particle p, double dt) {
+    public void bounce(Particle p) {
 
         double sigma = p.getRadius() + this.radius;
 
         State p2 = p.getState();
-        double dx = p.updateX(dt) - updateX(dt);
-        double dy = p.updateY(dt) - updateY(dt);
+        double dx = p2.getX() - state.getX();
+        double dy = p2.getY() - state.getY();
 
         double dvx = (p2.getVX() - state.getVX());
         double dvy = (p2.getVY() - state.getVY());
@@ -88,6 +91,11 @@ public class Particle {
         collisionCount++;
     }
 
+    public void updateState(double dt) {
+        updateX(dt);
+        updateY(dt);
+    }
+
     public double updateX(double dt){
         state.x = state.x + state.vx * dt;
         return state.x;
@@ -97,18 +105,6 @@ public class Particle {
         state.y = state.y + state.vy * dt;
         return state.y;
     }
-
-    private double distanceFromAxis(double ax1, double ax2, double L){
-        return Math.abs(ax1 - ax2);
-    }
-
-    public double calculateDistance(Particle p, double L) {
-        double x = distanceFromAxis(state.getX(), p.getState().getX(), L);
-        double y = distanceFromAxis(state.getY(), p.getState().getY(), L);
-
-        return Math.sqrt(x*x + y*y) - this.radius - p.getRadius();
-    }
-
 
     // Getters
 

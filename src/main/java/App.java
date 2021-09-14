@@ -14,11 +14,13 @@ public class App {
 
         List<Particle> particleList = new ArrayList<>();
         particleList.add(new Particle(0,0.3,0.5,0.1,1,1,1));
-        particleList.add(new Particle(1,0.7,0.5,0.1,1,-1,-1));
+        particleList.add(new Particle(1,0.7,0.5,0.1,1,-1,1));
         particleList.add(new Particle(2,0.8,0.2,0.1,1,1,0));
         Board b = new Board(1, particleList);
 
         b.calculateEvents();
-        b.executeEvent();
+        for (int i = 0; i < 100; i++) {
+            b.executeEvent();
+        }
     }
 }

@@ -1,3 +1,6 @@
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
 
 public class Event implements Comparable<Event> {
@@ -16,15 +19,20 @@ public class Event implements Comparable<Event> {
         this.isValid = true;
     }
 
-    public void collide(){
+    public List<Particle> collide(){
         if (type == CollisionType.PARTICLE){
-            p1.bounce(p2, time);
+            p1.bounce(p2);
+            return Arrays.asList(p1,p2);
         }else if (type == CollisionType.HORIZONTAL_WALL){
             p1.bounceY();
+            return Collections.singletonList(p1);
         }else if(type == CollisionType.VERTICAL_WALL){
             p1.bounceX();
+            return Collections.singletonList(p1);
         }
+        return Collections.emptyList();
     }
+
     public double getTime() { return time; }
 
     public Particle getP1() { return p1; }
@@ -54,4 +62,12 @@ public class Event implements Comparable<Event> {
     }
 
     public void invalidate() { this.isValid = false; }
+
+    public void stillValid(List<Particle> collidingParticles) {
+        for(Particle p : collidingParticles){
+            if (p.equals(p1) || p.equals(p2)){
+                invalidate();
+            }
+        }
+    }
 }
