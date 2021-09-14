@@ -1,6 +1,8 @@
 import java.io.BufferedWriter;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.util.List;
+import java.util.function.Consumer;
 
 public class FileManager {
 
@@ -44,6 +46,21 @@ public class FileManager {
             pos.close();
             System.out.println("Resultados en "+ fileName + ".xyz");
         } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public static void writeCsv(String fileName, List<String> lines, String header) {
+        try {
+            FileWriter pos = new FileWriter(fileName + ".csv", false);
+            BufferedWriter buffer = new BufferedWriter(pos);
+            buffer.write(header);
+            buffer.newLine();
+            for(String line : lines) {
+                buffer.write(line);
+                buffer.newLine();
+            }
+        } catch (IOException e) {
             System.out.println(e.getMessage());
         }
     }

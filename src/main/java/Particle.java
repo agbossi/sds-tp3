@@ -174,15 +174,7 @@ public class Particle {
             return vy;
         }
 
-//        @Override
-//        public String toString() {
-//            return " [" +
-//                    "x=" + x +
-//                    ", y=" + y +
-//                    ", vx=" + vx +
-//                    ", vy=" + vy +
-//                    ", theta=" + theta +
-//                    "]";
-//        }
+        public double getV() { return Math.sqrt(Math.pow(vx, 2) + Math.pow(vy, 2)); }
+
     }
 }

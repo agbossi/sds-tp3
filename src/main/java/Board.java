@@ -11,11 +11,14 @@ public class Board {
     private final PriorityQueue<Event> events;
     private final Set<Event> collisions;
 
+    private final OutputData outputData;
+
     public Board(double L, List<Particle> particles) {
         this.L = L;
         this.particles = particles;
         this.events = new PriorityQueue<>();
         this.collisions = new HashSet<>();
+        this.outputData = new OutputData(this.particles);
     }
 
     public static Board getRandomBoard(int n, double l, double minR, double minMass, double maxR, double maxMass, double maxV, boolean file) {
@@ -128,6 +131,14 @@ public class Board {
             }
             List<Particle> collidingParticles = e.collide();
 
+            // si el evento tiene a la particula grande, hay que meter la nueva trayectoria
+            checkForBigParticle(e.getP1(), dt);
+            checkForBigParticle(e.getP2(), dt);
+
+            // guardo las velocidades de todas las particulas para el
+            // tiempo donde se produjo colision
+            outputData.addVelocities(particles);
+
             // Invalido los eventos en los que participaban esta/s particula/s
             for (Event oldEvent : events){
                 oldEvent.stillValid(collidingParticles);
@@ -148,6 +159,13 @@ public class Board {
         }
     }
 
+    private void checkForBigParticle(Particle p, double dt) {
+        Optional.ofNullable(p).ifPresent(particle -> {
+            if(particle.getId() == 0)
+                outputData.addBigParticleTrajectory(particle, dt);
+        });
+    }
+
     public double getL() {
         return L;
     }
@@ -155,6 +173,8 @@ public class Board {
     public int getN() {
         return particles.size();
     }
+
+    public OutputData getOutputData() { return outputData; }
 
     public List<Particle> getParticles() {
         return particles;
