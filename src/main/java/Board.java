@@ -19,7 +19,7 @@ public class Board {
         this.L = L;
         this.totalTime = 0;
         this.particles = particles;
-        this.events = new PriorityQueue<>();
+        this.events = new PriorityQueue<>(Event::compareTo);
         this.collisions = new HashSet<>();
         this.outputData = new OutputData(this.particles);
     }

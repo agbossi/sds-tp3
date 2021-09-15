@@ -28,6 +28,8 @@ public class App {
                 System.out.println("Events executed: " + i);
             }
             test.executeEvent();
+            System.out.println(test.getTotalTime());
+            System.out.println(test.getTotalCollisions());
             try {
                 buffer.newLine();
             } catch (Exception e) {
