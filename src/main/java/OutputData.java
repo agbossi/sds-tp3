@@ -1,11 +1,13 @@
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class OutputData {
 
-    private static final int BIG_PARTICLE = 1;
-    private int n;
+    private static final int BIG_PARTICLE = 0;
+    private final int n;
     private final List<Double> particlesVelocities;
     private final List<TrajectoryData> bigParticleTrajectory;
 
@@ -42,6 +44,7 @@ public class OutputData {
     public int getN() {
         return n;
     }
+    public static int getBigParticleId() { return BIG_PARTICLE; }
 
     private static class TrajectoryData {
         private final Particle.State state;

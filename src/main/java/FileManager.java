@@ -28,23 +28,60 @@ public class FileManager {
         }
     }
 
-    public static void outputFile(List<Particle> particles, String fileName) {
+    private static void printDummies(BufferedWriter buffer, double l) {
+        try {
+            buffer.newLine();
+            buffer.write("-4 0 0 0 0 0 255 255 255");
+            buffer.newLine();
+            buffer.write("-3 0 " + l + " 0 0 0 255 255 255");
+            buffer.newLine();
+            buffer.write("-2 0 0 " + l + " 0 0 255 255 255");
+            buffer.newLine();
+            buffer.write("-1 0 " + l + " " + l + " 0 0 255 255 255");
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+
+    }
+
+    public static BufferedWriter createOutputFile(String fileName) {
         if(fileName.equals("")){
             fileName = "positions";
         }
+
+        BufferedWriter buffer = null;
+
         try {
             FileWriter pos = new FileWriter(fileName + ".xyz", false);
-            BufferedWriter buffer = new BufferedWriter(pos);
-            buffer.write(String.valueOf(particles.size()));
+            buffer = new BufferedWriter(pos);
+//            System.out.println("Resultados en "+ fileName + ".xyz");
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+
+        return buffer;
+    }
+
+    public static void writeOutputFile(List<Particle> particles, BufferedWriter buffer, double l) {
+        try {
+            buffer.write(String.valueOf(particles.size()+4));
             buffer.newLine();
+
+            // dummies for box
+            printDummies(buffer,l);
+
             for(Particle p : particles) {
                 buffer.newLine();
-                buffer.write(p.getId() + " " + p.getState().getX() + " " + p.getState().getY() + " " + p.getState().getVX() + " " + p.getState().getVY());
+                buffer.write(p.getId() + " " + p.getRadius() + " " + p.getState().getX() + " " + p.getState().getY() + " " + p.getState().getVX() + " " + p.getState().getVY());
+                if(p.getId() == 0) {
+                    buffer.write(" 255 0 0");
+                } else {
+                    buffer.write(" 0 255 255");
+                }
             }
+
             buffer.flush();
-            buffer.close();
-            pos.close();
-            System.out.println("Resultados en "+ fileName + ".xyz");
+
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
@@ -60,6 +97,9 @@ public class FileManager {
                 buffer.write(line);
                 buffer.newLine();
             }
+            buffer.flush();
+            buffer.close();
+            pos.close();
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }

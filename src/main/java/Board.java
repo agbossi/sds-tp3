@@ -13,6 +13,7 @@ public class Board {
     private final Set<Event> collisions;
 
     private final OutputData outputData;
+    private final static int bigId = OutputData.getBigParticleId();
 
     public Board(double L, List<Particle> particles) {
         this.L = L;
@@ -54,7 +55,7 @@ public class Board {
                 FileManager.particleInputFiles(x, y, vx, vy, maxMass, maxR, stBuffer, dynBuffer);
             }
 
-            particles.add(new Particle(0, x, y, minR, minMass, vx, vy));
+            particles.add(new Particle(bigId, x, y, maxR, maxMass, vx, vy));
 
             // Little particles
             double v, theta;
@@ -64,7 +65,8 @@ public class Board {
                     x = ThreadLocalRandom.current().nextDouble(minR, l - minR);
                     y = ThreadLocalRandom.current().nextDouble(minR, l - minR);
                 } while (overlap(x, y, minR, particles));
-                v = random.nextDouble() * maxV;
+//                v = random.nextDouble() * maxV;
+                v = Math.random() * maxV;
                 theta = Math.random() * 2 * Math.PI;
                 vx = v * Math.cos(theta) * (random.nextBoolean() ? -1 : 1);
                 vy = v * Math.sin(theta) * (random.nextBoolean() ? -1 : 1);
