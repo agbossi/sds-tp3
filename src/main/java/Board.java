@@ -148,11 +148,11 @@ public class Board {
             }
 
             // Calculo los nuevos eventos para las particulas que cambiaron su trayectoria
-            for (int i = 0; i < collidingParticles.size(); i++) {
-                Particle p1 = particles.get(i);
-                for (int j = i + 1; j < particles.size(); j++) {
-                    Particle p2 = particles.get(j);
-                    events.add(new Event(p1.collides(p2), p1, p2, CollisionType.PARTICLE));
+            for (Particle p1 : collidingParticles) {
+                for (Particle p2 : particles) {
+                    if (!p1.equals(p2)) {
+                        events.add(new Event(p1.collides(p2), p1, p2, CollisionType.PARTICLE));
+                    }
                 }
                 events.add(new Event(p1.collidesX(L), p1, null, CollisionType.VERTICAL_WALL));
                 events.add(new Event(p1.collidesY(L), p1, null, CollisionType.HORIZONTAL_WALL));
