@@ -19,10 +19,15 @@ public class App {
         Board b = new Board(1, particleList); */
 
         test.calculateEvents();
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < 10000; i++) {
+            if (i % 500 == 0){
+                System.out.println("Events executed: " + i);
+            }
             test.executeEvent();
         }
         FileManager.writeCsv("velocidades", test.getOutputData().getVelocitiesForParticles(), "v");
         FileManager.writeCsv("trayectorias", test.getOutputData().getBigParticleTrajectories(), "x;y;vx;vy;t0");
+
+        System.out.println("Average collision frequency: " + test.getTotalCollisions()/test.getTotalTime());
     }
 }

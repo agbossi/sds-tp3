@@ -7,6 +7,7 @@ import java.util.concurrent.ThreadLocalRandom;
 public class Board {
 
     private final double L;
+    private double totalTime;
     private final List<Particle> particles;
     private final PriorityQueue<Event> events;
     private final Set<Event> collisions;
@@ -15,6 +16,7 @@ public class Board {
 
     public Board(double L, List<Particle> particles) {
         this.L = L;
+        this.totalTime = 0;
         this.particles = particles;
         this.events = new PriorityQueue<>();
         this.collisions = new HashSet<>();
@@ -126,6 +128,7 @@ public class Board {
 
         if (e != null){
             double dt = e.getTime();
+            totalTime += dt;
             for (Particle p : particles) {
                 p.updateState(dt);
             }
@@ -180,4 +183,11 @@ public class Board {
         return particles;
     }
 
+    public double getTotalTime() {
+        return totalTime;
+    }
+
+    public double getTotalCollisions(){
+        return particles.stream().mapToDouble(Particle::getCollisionCount).sum();
+    }
 }
