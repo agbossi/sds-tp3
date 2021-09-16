@@ -10,9 +10,9 @@ public class App {
 
     public static void main( String[] args ) {
         int n = 100; //(int) (Math.random()*(MAX_N-MIN_N)) + MIN_N;
-        String run = "_run=" + 1;
+        String run = "_run=" + 2;
         double l = 6;
-        Board test = Board.getRandomBoard(n,l,0.2,0.9,0.7,2,2,true);
+        Board test = Board.getRandomBoard(n,l,0.2,0.9,0.7,2,1,true);
 
         test.calculateEvents();
         BufferedWriter buffer = FileManager.createOutputFile("positions");
