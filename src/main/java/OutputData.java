@@ -9,19 +9,25 @@ public class OutputData {
     private static final int BIG_PARTICLE = 0;
     private final int n;
     private final List<Double> particlesVelocities;
+    private final List<Double> times;
     private final List<TrajectoryData> bigParticleTrajectory;
 
     public OutputData(List<Particle> particles) {
+        this.times = new LinkedList<>();
         this.particlesVelocities = new LinkedList<>();
         this.bigParticleTrajectory = new LinkedList<>();
         this.n = particles.size();
-        this.particlesVelocities.addAll(addVelocities(particles));
+        this.addVelocities(particles);
         Particle bigParticle = particles.stream().filter(particle -> particle.getId() == BIG_PARTICLE).findAny().get();
         this.bigParticleTrajectory.add(new TrajectoryData(bigParticle.getState(), 0.0));
     }
 
-    public void addBigParticleTrajectory(Particle bigParticle, double t0) {
-        this.bigParticleTrajectory.add(new TrajectoryData(bigParticle.getState(), t0));
+    private List<String> doubleListToString(List<Double> list) {
+        return list.stream().map(Object::toString).collect(Collectors.toList());
+    }
+
+    public void addBigParticleTrajectory(Particle bigParticle, double t) {
+        this.bigParticleTrajectory.add(new TrajectoryData(bigParticle.getState(), t));
     }
 
     public List<String> getBigParticleTrajectories() {
@@ -29,16 +35,21 @@ public class OutputData {
                 .map(TrajectoryData::toString).collect(Collectors.toList());
     }
 
-    public List<Double> addVelocities(List<Particle> particles) {
-        return particles.stream().filter(particle -> particle.getId() != BIG_PARTICLE)
-                .map(particle -> particle.getState().getV()).collect(Collectors.toList());
+    public void addVelocities(List<Particle> particles) {
+        this.particlesVelocities.addAll(particles.stream().filter(particle -> particle.getId() != BIG_PARTICLE)
+                .map(particle -> particle.getState().getV()).collect(Collectors.toList()));
     }
 
     public List<String> getVelocitiesForParticles() {
-        return this.particlesVelocities
-                .stream()
-                .map(Object::toString)
-                .collect(Collectors.toList());
+        return doubleListToString(this.particlesVelocities);
+    }
+
+    public void addCollisionDt(double dt) {
+        this.times.add(dt);
+    }
+
+    public List<String> getTimesForParticles() {
+        return doubleListToString(this.times);
     }
 
     public int getN() {
@@ -48,16 +59,16 @@ public class OutputData {
 
     private static class TrajectoryData {
         private final Particle.State state;
-        private final double t0;
+        private final double t;
 
         public TrajectoryData(Particle.State state, double t0) {
             this.state = state;
-            this.t0 = t0;
+            this.t = t0;
         }
 
         @Override
         public String toString() {
-            return state.getX() + ";" + state.getY() + ";" + state.getVX() + ";" + state.getVY() + ";" + t0;
+            return state.getX() + ";" + state.getY() + ";" + t;
         }
     }
 }

@@ -130,14 +130,16 @@ public class Board {
 
         double dt = e.getTime();
         totalTime += dt;
+        outputData.addCollisionDt(dt);
+
         for (Particle p : particles) {
             p.updateState(dt);
         }
         List<Particle> collidingParticles = e.collide();
 
         // si el evento tiene a la particula grande, hay que meter la nueva trayectoria
-        checkForBigParticle(e.getP1(), dt);
-        checkForBigParticle(e.getP2(), dt);
+        checkForBigParticle(e.getP1(), totalTime);
+        checkForBigParticle(e.getP2(), totalTime);
 
         // guardo las velocidades de todas las particulas para el
         // tiempo donde se produjo colision
@@ -160,10 +162,10 @@ public class Board {
         }
     }
 
-    private void checkForBigParticle(Particle p, double dt) {
+    private void checkForBigParticle(Particle p, double time) {
         Optional.ofNullable(p).ifPresent(particle -> {
             if(particle.getId() == 0)
-                outputData.addBigParticleTrajectory(particle, dt);
+                outputData.addBigParticleTrajectory(particle, time);
         });
     }
 
