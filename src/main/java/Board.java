@@ -164,7 +164,7 @@ public class Board {
 
     private void checkForBigParticle(Particle p, double time) {
         Optional.ofNullable(p).ifPresent(particle -> {
-            if(particle.getId() == 0)
+            if(particle.getId() == OutputData.getBigParticleId())
                 outputData.addBigParticleTrajectory(particle, time);
         });
     }
