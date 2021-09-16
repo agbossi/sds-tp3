@@ -37,6 +37,4 @@ def histogram(data_frame, column):
 
 
 velocity_df = pd.read_csv('velocidades.csv')
-final_elems = int(len(velocity_df.index) - (len(velocity_df.index) * 0.66))
-last_third_df = velocity_df.tail(final_elems)
-histogram(last_third_df, 'v')
+histogram(velocity_df, 'v')

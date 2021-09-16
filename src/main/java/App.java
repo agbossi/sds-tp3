@@ -17,13 +17,14 @@ public class App {
         test.calculateEvents();
         BufferedWriter buffer = FileManager.createOutputFile("positions");
         FileManager.writeOutputFile(test.getParticles(), buffer, l);
-        for (int i = 0; i < 2; i++) {
+        int iterations = 10000;
+        for (int i = 0; i < iterations; i++) {
             if (i % 500 == 0){
                 System.out.println("Events executed: " + i);
             }
-            test.executeEvent();
-            System.out.println(test.getTotalTime());
-            System.out.println(test.getTotalCollisions());
+            test.executeEvent(i >= iterations - 0.3 * iterations);
+            //System.out.println(test.getTotalTime());
+            //System.out.println(test.getTotalCollisions());
             try {
                 buffer.newLine();
             } catch (Exception e) {

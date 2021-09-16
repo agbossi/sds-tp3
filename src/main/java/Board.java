@@ -121,7 +121,7 @@ public class Board {
         }
     }
 
-    public void executeEvent() {
+    public void executeEvent(boolean saveVelocity) {
 
         Event e = events.poll();
         while (e != null && !e.isValid()){
@@ -141,9 +141,9 @@ public class Board {
         checkForBigParticle(e.getP1(), totalTime);
         checkForBigParticle(e.getP2(), totalTime);
 
-        // guardo las velocidades de todas las particulas para el
-        // tiempo donde se produjo colision
-        outputData.addVelocities(particles);
+        // guardo las velocidades de todas las particulas para la distribucion
+        if(saveVelocity)
+            outputData.addVelocities(particles);
 
         // Invalido los eventos en los que participaban esta/s particula/s
         for (Event oldEvent : events){

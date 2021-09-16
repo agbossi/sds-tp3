@@ -17,7 +17,6 @@ public class OutputData {
         this.particlesVelocities = new LinkedList<>();
         this.bigParticleTrajectory = new LinkedList<>();
         this.n = particles.size();
-        this.addVelocities(particles);
         Particle bigParticle = particles.stream().filter(particle -> particle.getId() == BIG_PARTICLE).findAny().get();
         this.bigParticleTrajectory.add(new TrajectoryData(bigParticle.getState(), 0.0));
     }
