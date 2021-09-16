@@ -23,7 +23,7 @@ public class App {
         test.calculateEvents();
         BufferedWriter buffer = FileManager.createOutputFile("positions");
         FileManager.writeOutputFile(test.getParticles(), buffer, l);
-        for (int i = 0; i < 1000; i++) {
+        for (int i = 0; i < 10000; i++) {
             if (i % 500 == 0){
                 System.out.println("Events executed: " + i);
             }

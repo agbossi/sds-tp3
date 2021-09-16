@@ -7,7 +7,7 @@ public class Particle {
     private final double mass;
     private final double radius;
     private final State state;
-    public static final double UNREACHABLE = 1;
+    public static final double UNREACHABLE = Double.MAX_VALUE;
 
     public Particle(int id, double x, double y, double radius, double mass, double vx, double vy) {
         this.id = id;
@@ -96,14 +96,12 @@ public class Particle {
         updateY(dt);
     }
 
-    public double updateX(double dt){
+    public void updateX(double dt){
         state.x = state.x + state.vx * dt;
-        return state.x;
     }
 
-    public double updateY(double dt){
+    public void updateY(double dt){
         state.y = state.y + state.vy * dt;
-        return state.y;
     }
 
     // Getters

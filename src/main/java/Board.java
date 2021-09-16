@@ -128,39 +128,35 @@ public class Board {
             e = events.poll();
         }
 
-        if (e != null){
-            double dt = e.getTime();
-            totalTime += dt;
-            for (Particle p : particles) {
-                p.updateState(dt);
-            }
-            List<Particle> collidingParticles = e.collide();
+        double dt = e.getTime();
+        totalTime += dt;
+        for (Particle p : particles) {
+            p.updateState(dt);
+        }
+        List<Particle> collidingParticles = e.collide();
 
-            // si el evento tiene a la particula grande, hay que meter la nueva trayectoria
-            checkForBigParticle(e.getP1(), dt);
-            checkForBigParticle(e.getP2(), dt);
+        // si el evento tiene a la particula grande, hay que meter la nueva trayectoria
+        checkForBigParticle(e.getP1(), dt);
+        checkForBigParticle(e.getP2(), dt);
 
-            // guardo las velocidades de todas las particulas para el
-            // tiempo donde se produjo colision
-            outputData.addVelocities(particles);
+        // guardo las velocidades de todas las particulas para el
+        // tiempo donde se produjo colision
+        outputData.addVelocities(particles);
 
-            // Invalido los eventos en los que participaban esta/s particula/s
-            for (Event oldEvent : events){
-                oldEvent.stillValid(collidingParticles);
-            }
+        // Invalido los eventos en los que participaban esta/s particula/s
+        for (Event oldEvent : events){
+            oldEvent.stillValid(collidingParticles, dt);
+        }
 
-            // Calculo los nuevos eventos para las particulas que cambiaron su trayectoria
-            for (Particle p1 : collidingParticles) {
-                for (Particle p2 : particles) {
-                    if (!p1.equals(p2)) {
-                        events.add(new Event(p1.collides(p2), p1, p2, CollisionType.PARTICLE));
-                    }
+        // Calculo los nuevos eventos para las particulas que cambiaron su trayectoria
+        for (Particle p1 : collidingParticles) {
+            for (Particle p2 : particles) {
+                if (!p1.equals(p2)) {
+                    events.add(new Event(p1.collides(p2), p1, p2, CollisionType.PARTICLE));
                 }
-                events.add(new Event(p1.collidesX(L), p1, null, CollisionType.VERTICAL_WALL));
-                events.add(new Event(p1.collidesY(L), p1, null, CollisionType.HORIZONTAL_WALL));
             }
-        }else{
-            throw new IllegalStateException(); // Siempre hay un evento para correr
+            events.add(new Event(p1.collidesX(L), p1, null, CollisionType.VERTICAL_WALL));
+            events.add(new Event(p1.collidesY(L), p1, null, CollisionType.HORIZONTAL_WALL));
         }
     }
 

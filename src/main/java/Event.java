@@ -5,7 +5,7 @@ import java.util.Objects;
 
 public class Event implements Comparable<Event> {
 
-    private final double time;
+    private double time;
     private final Particle p1;
     private final Particle p2;
     private final CollisionType type;
@@ -63,7 +63,8 @@ public class Event implements Comparable<Event> {
 
     public void invalidate() { this.isValid = false; }
 
-    public void stillValid(List<Particle> collidingParticles) {
+    public void stillValid(List<Particle> collidingParticles, double dt) {
+        time -= dt;
         for(Particle p : collidingParticles){
             if (p.equals(p1) || p.equals(p2)){
                 invalidate();
