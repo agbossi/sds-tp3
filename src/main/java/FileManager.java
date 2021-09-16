@@ -44,43 +44,41 @@ public class FileManager {
 
     }
 
-    public static BufferedWriter createOutputFile(String fileName) {
-        if(fileName.equals("")){
-            fileName = "positions";
-        }
-
-        BufferedWriter buffer = null;
-
+    public static void writeOutputFile(String fileName, List<List<Particle>> particlesEvolution, double l) {
         try {
+
+            if(fileName.equals("")){
+                fileName = "positions";
+            }
+
             FileWriter pos = new FileWriter(fileName + ".xyz", false);
-            buffer = new BufferedWriter(pos);
-//            System.out.println("Resultados en "+ fileName + ".xyz");
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
-
-        return buffer;
-    }
-
-    public static void writeOutputFile(List<Particle> particles, BufferedWriter buffer, double l) {
-        try {
-            buffer.write(String.valueOf(particles.size()+4));
-            buffer.newLine();
-
-            // dummies for box
-            printDummies(buffer,l);
-
-            for(Particle p : particles) {
-                buffer.newLine();
-                buffer.write(p.getId() + " " + p.getRadius() + " " + p.getState().getX() + " " + p.getState().getY() + " " + p.getState().getVX() + " " + p.getState().getVY());
-                if(p.getId() == 0) {
-                    buffer.write(" 255 0 0");
+            BufferedWriter buffer = new BufferedWriter(pos);
+            boolean first = true;
+            for(List<Particle> particles : particlesEvolution) {
+                if(first) {
+                    first = false;
                 } else {
-                    buffer.write(" 0 255 255");
+                    buffer.newLine();
+                }
+                buffer.write(String.valueOf(particles.size()+4));
+                buffer.newLine();
+                printDummies(buffer,l);
+                for(Particle p : particles) {
+                    buffer.newLine();
+                    buffer.write(p.getId() + " " + p.getRadius() + " " + p.getState().getX() + " " + p.getState().getY() + " " + p.getState().getVX() + " " + p.getState().getVY());
+                    if (p.getId() == 0) {
+                        buffer.write(" 255 0 0");
+                    } else {
+                        buffer.write(" 0 255 255");
+                    }
                 }
             }
 
+            System.out.println("Resultados en "+ fileName + ".xyz");
+
             buffer.flush();
+            buffer.close();
+            pos.close();
 
         } catch (Exception e) {
             System.out.println(e.getMessage());
