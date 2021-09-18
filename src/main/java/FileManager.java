@@ -2,7 +2,7 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
-import java.util.function.Consumer;
+import java.util.function.Function;
 
 public class FileManager {
 
@@ -85,14 +85,14 @@ public class FileManager {
             }
         }
 
-    public static void writeCsv(String fileName, List<String> lines, String header) {
+    public static<T> void writeCsv(String fileName, List<T> lines, Function<T, String> csvLineConverter, String header) {
         try {
             FileWriter pos = new FileWriter(fileName + ".csv", false);
             BufferedWriter buffer = new BufferedWriter(pos);
             buffer.write(header);
             buffer.newLine();
-            for(String line : lines) {
-                buffer.write(line);
+            for(T line : lines) {
+                buffer.write(csvLineConverter.apply(line));
                 buffer.newLine();
             }
             buffer.flush();

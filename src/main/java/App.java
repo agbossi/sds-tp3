@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class App {
 
@@ -16,7 +17,7 @@ public class App {
         particlesEvolution.add(test.getParticlesForLogging());
 
         test.calculateEvents();
-        int iterations = 50000;
+        int iterations = 3;
         String runConfig = "_it=" + iterations + "_n=" + n + "_v=" + maxV + "_run:" + 2;
         for (int i = 0; i < iterations; i++) {
             if (i % 500 == 0){
@@ -41,8 +42,8 @@ public class App {
         System.out.println("Average collision time: " + avgCt);
 
         FileManager.writeOutputFile("test",particlesEvolution,l);
-        FileManager.writeCsv("velocidades" + runConfig, test.getOutputData().getVelocitiesForParticles(), "v");
-        FileManager.writeCsv("trayectorias" + runConfig, test.getOutputData().getParticlesTrajectories(), "id;x;y;t0");
-        FileManager.writeCsv("tiempos_colision" + runConfig, test.getOutputData().getTimesForParticles(), "dt");
+        FileManager.writeCsv("velocidades" + runConfig, test.getOutputData().getParticlesVelocities(), Object::toString,"v");
+        FileManager.writeCsv("trayectorias" + runConfig, test.getOutputData().getParticlesTrajectories(), OutputData.TrajectoryData::toString,"id;x;y;t0");
+        FileManager.writeCsv("tiempos_colision" + runConfig, test.getOutputData().getTimes(), Object::toString, "dt");
     }
 }
