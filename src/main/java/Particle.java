@@ -59,6 +59,8 @@ public class Particle {
 
         p.getState().vx = p.getState().vx - jx / p.getMass();
         p.getState().vy = p.getState().vy - jy / p.getMass();
+
+        this.collisionCount++;
     }
 
     public double collidesX(double boardLength){
@@ -154,6 +156,13 @@ public class Particle {
             this.y = y;
             this.vx = vx;
             this.vy = vy;
+        }
+
+        public State(State state) {
+            this.x = state.getX();
+            this.y = state.getY();
+            this.vx = state.getVX();
+            this.vy = state.getVY();
         }
 
         public double getX() {

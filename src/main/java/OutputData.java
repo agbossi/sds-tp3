@@ -1,63 +1,77 @@
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class OutputData {
 
     private static final int BIG_PARTICLE = 0;
-    private final int n;
     private final List<Double> particlesVelocities;
-    private final List<TrajectoryData> bigParticleTrajectory;
+    private final List<Double> times;
+    private final List<List<TrajectoryData>> particlesTrajectories;
 
     public OutputData(List<Particle> particles) {
+        this.times = new LinkedList<>();
         this.particlesVelocities = new LinkedList<>();
-        this.bigParticleTrajectory = new LinkedList<>();
-        this.n = particles.size();
-        this.particlesVelocities.addAll(addVelocities(particles));
-        Particle bigParticle = particles.stream().filter(particle -> particle.getId() == BIG_PARTICLE).findAny().get();
-        this.bigParticleTrajectory.add(new TrajectoryData(bigParticle.getState(), 0.0));
+        this.particlesTrajectories = new LinkedList<>();
+        this.particlesTrajectories.add(getTrajectories(particles, 0.0));
     }
 
-    public void addBigParticleTrajectory(Particle bigParticle, double t0) {
-        this.bigParticleTrajectory.add(new TrajectoryData(bigParticle.getState(), t0));
-    }
-
-    public List<String> getBigParticleTrajectories() {
-        return this.bigParticleTrajectory.stream()
-                .map(TrajectoryData::toString).collect(Collectors.toList());
-    }
-
-    public List<Double> addVelocities(List<Particle> particles) {
-        return particles.stream().filter(particle -> particle.getId() != BIG_PARTICLE)
-                .map(particle -> particle.getState().getV()).collect(Collectors.toList());
-    }
-
-    public List<String> getVelocitiesForParticles() {
-        return this.particlesVelocities
-                .stream()
-                .map(Object::toString)
+    public List<TrajectoryData> getTrajectories(List<Particle> particles, double t) {
+        return particles.stream()
+                .map(particle -> new TrajectoryData(particle.getId(), particle.getState().getX(), particle.getState().getY(), t))
                 .collect(Collectors.toList());
     }
 
-    public int getN() {
-        return n;
+    private List<String> doubleListToString(List<Double> list) {
+        return list.stream().map(Object::toString).collect(Collectors.toList());
     }
+
+    public void addParticleTrajectories(List<Particle> particles, double t) {
+        this.particlesTrajectories.add(getTrajectories(particles, t));
+    }
+
+    public List<String> getParticlesTrajectories() {
+        List<String> trajectoryLines = new LinkedList<>();
+        this.particlesTrajectories.forEach(tTrajectory -> tTrajectory
+                        .forEach(trajectoryData -> trajectoryLines.add(trajectoryData.toString())));
+        return trajectoryLines;
+    }
+
+    public void addVelocities(List<Particle> particles) {
+        this.particlesVelocities.addAll(particles.stream().filter(particle -> particle.getId() != BIG_PARTICLE)
+                .map(particle -> particle.getState().getV()).collect(Collectors.toList()));
+    }
+
+    public List<String> getVelocitiesForParticles() {
+        return doubleListToString(this.particlesVelocities);
+    }
+
+    public void addCollisionDt(double dt) {
+        this.times.add(dt);
+    }
+
+    public List<String> getTimesForParticles() {
+        return doubleListToString(this.times);
+    }
+
     public static int getBigParticleId() { return BIG_PARTICLE; }
 
     private static class TrajectoryData {
-        private final Particle.State state;
-        private final double t0;
+        private final int id;
+        private final double x;
+        private final double y;
+        private final double t;
 
-        public TrajectoryData(Particle.State state, double t0) {
-            this.state = state;
-            this.t0 = t0;
+        public TrajectoryData(int id, double x, double y, double t) {
+            this.id = id;
+            this.x = x;
+            this.y = y;
+            this.t = t;
         }
 
         @Override
         public String toString() {
-            return state.getX() + ";" + state.getY() + ";" + state.getVX() + ";" + state.getVY() + ";" + t0;
+            return id + ";" + x + ";" + y + ";" + t;
         }
     }
 }

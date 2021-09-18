@@ -10,7 +10,6 @@ public class Board {
     private double totalTime;
     private final List<Particle> particles;
     private final PriorityQueue<Event> events;
-    private final Set<Event> collisions;
 
     private final OutputData outputData;
     private final static int bigId = OutputData.getBigParticleId();
@@ -20,7 +19,6 @@ public class Board {
         this.totalTime = 0;
         this.particles = particles;
         this.events = new PriorityQueue<>(Event::compareTo);
-        this.collisions = new HashSet<>();
         this.outputData = new OutputData(this.particles);
     }
 
@@ -114,14 +112,16 @@ public class Board {
             Particle p1 = particles.get(i);
             for (int j = i + 1; j < particles.size(); j++) {
                 Particle p2 = particles.get(j);
-                events.add(new Event(p1.collides(p2), p1, p2, CollisionType.PARTICLE));
+                Event e = new Event(p1.collides(p2), p1, p2, CollisionType.PARTICLE);
+                if(Double.compare(e.getTime(), Double.MAX_VALUE) != 0)
+                    events.add(e);
             }
             events.add(new Event(p1.collidesX(L), p1, null, CollisionType.VERTICAL_WALL));
             events.add(new Event(p1.collidesY(L), p1, null, CollisionType.HORIZONTAL_WALL));
         }
     }
 
-    public void executeEvent() {
+    public void executeEvent(boolean saveVelocity) {
 
         Event e = events.poll();
         while (e != null && !e.isValid()){
@@ -135,9 +135,14 @@ public class Board {
         }
         List<Particle> collidingParticles = e.collide();
 
-        // si el evento tiene a la particula grande, hay que meter la nueva trayectoria
-        checkForBigParticle(e.getP1(), dt);
-        checkForBigParticle(e.getP2(), dt);
+        // guardo las posiciones de las particulas para reconstruir trayectoria de la grande
+        // y para calcular los DCM
+        outputData.addParticleTrajectories(this.particles, totalTime);
+
+
+        // para la distribucion de tiempos de colision
+        if(saveVelocity)
+            outputData.addCollisionDt(dt);
 
         // guardo las velocidades de todas las particulas para el
         // tiempo donde se produjo colision
@@ -152,7 +157,9 @@ public class Board {
         for (Particle p1 : collidingParticles) {
             for (Particle p2 : particles) {
                 if (!p1.equals(p2)) {
-                    events.add(new Event(p1.collides(p2), p1, p2, CollisionType.PARTICLE));
+                    Event event = new Event(p1.collides(p2), p1, p2, CollisionType.PARTICLE);
+                    if(Double.compare(event.getTime(), Double.MAX_VALUE) != 0)
+                        events.add(event);
                 }
             }
             events.add(new Event(p1.collidesX(L), p1, null, CollisionType.VERTICAL_WALL));
@@ -160,24 +167,21 @@ public class Board {
         }
     }
 
-    private void checkForBigParticle(Particle p, double dt) {
-        Optional.ofNullable(p).ifPresent(particle -> {
-            if(particle.getId() == 0)
-                outputData.addBigParticleTrajectory(particle, dt);
-        });
-    }
-
-    public double getL() {
-        return L;
-    }
-
-    public int getN() {
-        return particles.size();
-    }
-
     public OutputData getOutputData() { return outputData; }
 
-    public List<Particle> getParticles() {
+    public List<Particle> getParticles() { return particles; }
+
+    public List<Particle> getParticlesForLogging() {
+        final List<Particle> particles = new LinkedList<>();
+        this.particles
+                .forEach(particle -> particles.add(
+                        new Particle(particle.getId(),
+                                particle.getState().getX(),
+                                particle.getState().getY(),
+                                particle.getRadius(),
+                                particle.getMass(),
+                                particle.getState().getVX(),
+                                particle.getState().getVY())));
         return particles;
     }
 
