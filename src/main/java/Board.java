@@ -139,14 +139,14 @@ public class Board {
         // y para calcular los DCM
         outputData.addParticleTrajectories(this.particles, totalTime);
 
-
         // para la distribucion de tiempos de colision
-        if(saveVelocity)
-            outputData.addCollisionDt(dt);
+        outputData.addCollisionDt(dt);
 
         // guardo las velocidades de todas las particulas para el
         // tiempo donde se produjo colision
-        outputData.addVelocities(particles);
+        if(saveVelocity)
+            outputData.addVelocities(particles);
+
 
         // Invalido los eventos en los que participaban esta/s particula/s
         for (Event oldEvent : events){

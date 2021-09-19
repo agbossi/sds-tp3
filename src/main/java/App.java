@@ -8,7 +8,7 @@ public class App {
     private final static int MAX_N = 150;
 
     public static void main( String[] args ) {
-        int n = 100;//(int) (Math.random()*(MAX_N-MIN_N)) + MIN_N;
+        int n = 142;//(int) (Math.random()*(MAX_N-MIN_N)) + MIN_N;
         int maxV = 2;
         double l = 6;
         Board test = Board.getRandomBoard(n,l,0.2,0.9,0.7,2,maxV,true);
@@ -17,8 +17,8 @@ public class App {
         particlesEvolution.add(test.getParticlesForLogging());
 
         test.calculateEvents();
-        int iterations = 3;
-        String runConfig = "_it=" + iterations + "_n=" + n + "_v=" + maxV + "_run:" + 2;
+        int iterations = 50000;
+        String runConfig = "_it=" + iterations + "_n=" + n + "_v=" + maxV + "_run=" + 3;
         for (int i = 0; i < iterations; i++) {
             if (i % 500 == 0){
                 System.out.println("Events executed: " + i);
