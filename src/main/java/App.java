@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
@@ -11,9 +12,9 @@ public class App {
         int n = 142;//(int) (Math.random()*(MAX_N-MIN_N)) + MIN_N;
         int maxV = 2;
         double l = 6;
-        Board test = Board.getRandomBoard(n,l,0.2,0.9,0.7,2,maxV,true);
+        Board test = Board.getRandomBoard(n,l,0.2,0.9,0.7,2,maxV,false);
 
-        List<List<Particle>> particlesEvolution = new ArrayList<>();
+        List<List<Particle>> particlesEvolution = new LinkedList<>();
         particlesEvolution.add(test.getParticlesForLogging());
 
         test.calculateEvents();
