@@ -44,8 +44,9 @@ public class OutputData {
     } */
 
     public void addVelocities(List<Particle> particles) {
-        this.particlesVelocities.addAll(particles.stream().filter(particle -> particle.getId() != BIG_PARTICLE)
-                .map(particle -> particle.getState().getV()).collect(Collectors.toList()));
+        List<Double> v = particles.stream().filter(particle -> particle.getId() != BIG_PARTICLE)
+                .map(particle -> particle.getState().getV()).collect(Collectors.toList());
+        this.particlesVelocities.addAll(v);
     }
 
     /* public List<String> getVelocitiesForParticles() {

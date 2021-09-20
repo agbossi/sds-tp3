@@ -20,11 +20,11 @@ public class App {
         int iterations = 50000;
         String runConfig = "_it=" + iterations + "_n=" + n + "_v=" + maxV + "_run=" + 3;
         for (int i = 0; i < iterations; i++) {
-            if (i % 500 == 0){
+            if (i % 5000 == 0){
                 System.out.println("Events executed: " + i);
             }
 
-            test.executeEvent(i >= iterations - 0.3 * iterations);
+            test.executeEvent(i >= 2 * iterations / 3);
             particlesEvolution.add(test.getParticlesForLogging());
 
             // System.out.println(test.getTotalTime());
@@ -35,15 +35,15 @@ public class App {
         double avgCf = test.getTotalCollisions()/test.getTotalTime();
         double avgCt = test.getTotalTime()/test.getTotalCollisions();
 
-        System.out.println("n: " + n);
+        /* System.out.println("n: " + n);
         System.out.println("total collisions: " + test.getTotalCollisions());
         System.out.println("total time: " + test.getTotalTime());
         System.out.println("Average collision frequency: " + avgCf);
-        System.out.println("Average collision time: " + avgCt);
+        System.out.println("Average collision time: " + avgCt); */
 
-        FileManager.writeOutputFile("test",particlesEvolution,l);
+        //FileManager.writeOutputFile("test",particlesEvolution,l);
         FileManager.writeCsv("velocidades" + runConfig, test.getOutputData().getParticlesVelocities(), Object::toString,"v");
-        FileManager.writeCsv("trayectorias" + runConfig, test.getOutputData().getParticlesTrajectories(), OutputData.TrajectoryData::toString,"id;x;y;t0");
-        FileManager.writeCsv("tiempos_colision" + runConfig, test.getOutputData().getTimes(), Object::toString, "dt");
+        //FileManager.writeCsv("trayectorias" + runConfig, test.getOutputData().getParticlesTrajectories(), OutputData.TrajectoryData::toString,"id;x;y;t0");
+        //FileManager.writeCsv("tiempos_colision" + runConfig, test.getOutputData().getTimes(), Object::toString, "dt");
     }
 }

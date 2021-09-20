@@ -18,11 +18,11 @@ import pandas as pd
 # t_142 = [35.96241888643541, 36.36100633618521, 36.966992781126]
 
 runs = 3
-path = 'C:/Users/Meli/OneDrive/Escritorio/Data/it=50000_n=100_v=2/'
+path = 'C:/Users/Meli/OneDrive/Escritorio/Data/it=50000_n=142_v=2/'
 # path = os.path.abspath('../../Data/it=50000_n=100_v=2') # carpeta
 df = pd.DataFrame(columns=['dt'], dtype=float64)
 for run in range(1, runs+1):
-    file = 'tiempos_colision_it=50000_n=100_v=2_run=' + str(run) + '.csv'
+    file = 'tiempos_colision_it=50000_n=142_v=2_run=' + str(run) + '.csv'
     df = df.append(pd.read_csv(path + file), ignore_index=True)
 
 bins = 193 # st.calculate_optimal_bins(df, 'dt', runs)
@@ -33,11 +33,12 @@ wtf_count = wtf_count / runs
 max_dt = max(df['dt']) / bins
 x = [(i * max_dt) for i in range(1, bins+1)]
 y = wtf_count.to_dict().values()
+probabilities = [freq / 50000 for freq in y]
 xticks = np.linspace(0, df['dt'].max(), num=10, endpoint=True)
 plt.figure()
-plt.bar(x, y, max_dt, align='edge')
+plt.bar(x, probabilities, max_dt, align='edge')
 plt.xlabel("Intervalos tiempo de choque")
 plt.xticks(xticks, rotation=30)
-plt.ylabel("Frecuencia de choques")
+plt.ylabel("Probabilidad")
 plt.tight_layout()
 plt.show()
