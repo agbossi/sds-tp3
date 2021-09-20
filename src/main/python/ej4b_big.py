@@ -25,13 +25,17 @@ for i, row in df.iterrows():
         sd = []
         modsq = 0
 
-fig = plt.figure('msd', figsize=(16,10))
+slopes = np.linspace(0, 0.3, 10000)
+error = np.empty(10000)
+x = np.asarray(t)
+for i in range(10000):
+    error[i] = np.sum((msd - slopes[i]*x)**2)
+
+fig = plt.figure("Error", figsize=(16,10))
 ax = fig.add_subplot(1,1,1)
-ax.errorbar(t, msd, yerr=std_err, color='blue', alpha=0.02, capthick=1)
-ax.plot(t, msd, color='tab:orange')
-m, b = np.polyfit(t, msd, 1)
-ax.plot(t, m*np.asarray(t) + b, label=f'D= {m/2:.4f}'+r'$m^2$')
-ax.set_xlabel('Tiempo (s)')
-ax.set_ylabel(r'Desplazamiento cuadratico medio ($m^2$)')
+ax.plot(slopes, error)
+ax.plot(slopes[np.argmin(error)], error[np.argmin(error)], marker='o', color='b', label=f'm= {slopes[np.argmin(error)]:.4f}')
+ax.set_xlabel(r'Pendiente ($m^2$/s)')
+ax.set_ylabel(r'Error ($m^2$)')
 ax.legend()
 plt.show()

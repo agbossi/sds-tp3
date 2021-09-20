@@ -103,7 +103,7 @@ public class FileManager {
         }
     }
 
-    public static void writeMSDCalcCsv(String fileName, List<List<OutputData.TrajectoryData>> data, int iterations, String header){
+    public static void writeMSDBigParticleCalcCsv(String fileName, List<List<OutputData.TrajectoryData>> data, int iterations, String header){
         try {
             FileWriter pos = new FileWriter(fileName + ".csv", false);
             BufferedWriter buffer = new BufferedWriter(pos);

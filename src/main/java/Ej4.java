@@ -29,6 +29,6 @@ public class Ej4 {
         for (OutputData sim : simulations){
             data.add(sim.getParticlesTrajectories().stream().filter(td -> td.id == 0).collect(Collectors.toList()));
         }
-        FileManager.writeMSDCalcCsv("msd-big-particle-calc", data, iterations,"id;x;y;t0");
+        FileManager.writeMSDBigParticleCalcCsv("msd-big-particle-calc", data, iterations,"id;x;y;t0");
     }
 }
