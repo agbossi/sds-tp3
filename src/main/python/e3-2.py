@@ -17,7 +17,7 @@ iterations = 50000
 particles = 100
 bins = 284 # st.calculate_optimal_bins(df, 'v', runs)
 wtf = pd.cut(df['v'], bins=bins)
-wtf_count = wtf.value_counts()
+wtf_count = wtf.value_counts(sort=False)
 wtf_count = wtf_count / runs
 
 max_v = max(df['v']) / bins
