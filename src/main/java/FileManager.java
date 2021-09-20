@@ -102,4 +102,25 @@ public class FileManager {
             System.out.println(e.getMessage());
         }
     }
+
+    public static void writeMSDBigParticleCalcCsv(String fileName, List<List<OutputData.TrajectoryData>> data, int iterations, String header){
+        try {
+            FileWriter pos = new FileWriter(fileName + ".csv", false);
+            BufferedWriter buffer = new BufferedWriter(pos);
+            buffer.write(header);
+            buffer.newLine();
+
+            for (int i = 0; i < iterations; i++) {
+                for (List<OutputData.TrajectoryData> d : data) {
+                    buffer.write(d.get(i).toString());
+                    buffer.newLine();
+                }
+            }
+            buffer.flush();
+            buffer.close();
+            pos.close();
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
+    }
 }

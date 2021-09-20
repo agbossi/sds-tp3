@@ -64,7 +64,7 @@ public class OutputData {
     public static int getBigParticleId() { return BIG_PARTICLE; }
 
     public static class TrajectoryData {
-        private final int id;
+        public final int id;
         private final double x;
         private final double y;
         private final double t;

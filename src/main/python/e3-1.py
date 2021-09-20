@@ -27,7 +27,7 @@ for run in range(1, runs+1):
 
 bins = 193 # st.calculate_optimal_bins(df, 'dt', runs)
 wtf = pd.cut(df['dt'], bins=bins)
-wtf_count = wtf.value_counts()
+wtf_count = wtf.value_counts(sort=False)
 wtf_count = wtf_count / runs
 
 max_dt = max(df['dt']) / bins
