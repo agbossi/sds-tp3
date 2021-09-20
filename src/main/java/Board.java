@@ -11,12 +11,15 @@ public class Board {
     private final List<Particle> particles;
     private final PriorityQueue<Event> events;
 
+    private Event lastEvent;
+
     private final OutputData outputData;
     private final static int bigId = OutputData.getBigParticleId();
 
     public Board(double L, List<Particle> particles) {
         this.L = L;
         this.totalTime = 0;
+        this.lastEvent = null;
         this.particles = particles;
         this.events = new PriorityQueue<>(Event::compareTo);
         this.outputData = new OutputData(this.particles);
@@ -65,7 +68,7 @@ public class Board {
                 } while (overlap(x, y, minR, particles));
 //                v = random.nextDouble() * maxV;
                 v = Math.random() * maxV;
-                theta = Math.random() * 2 * Math.PI;
+                theta = ThreadLocalRandom.current().nextDouble() * 2 * Math.PI;
                 vx = v * Math.cos(theta) * (random.nextBoolean() ? -1 : 1);
                 vy = v * Math.sin(theta) * (random.nextBoolean() ? -1 : 1);
 
@@ -129,6 +132,7 @@ public class Board {
         }
 
         double dt = e.getTime();
+        lastEvent = new Event(e.getTime(),e.getP1(),e.getP2(),e.getType());
         totalTime += dt;
         for (Particle p : particles) {
             p.updateState(dt);
@@ -192,4 +196,6 @@ public class Board {
     public double getTotalCollisions(){
         return particles.stream().mapToDouble(Particle::getCollisionCount).sum();
     }
+
+    public Event getLastEvent() { return lastEvent; }
 }

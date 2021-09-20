@@ -146,6 +146,11 @@ public class Particle {
 //    }
 
 
+    @Override
+    public String toString() {
+        return "id: "+id+", r: "+radius+"m, mass: "+mass+" kg";
+    }
+
     public static class State{
 
         private double x, y;
@@ -183,5 +188,9 @@ public class Particle {
 
         public double getV() { return Math.sqrt(Math.pow(vx, 2) + Math.pow(vy, 2)); }
 
+        @Override
+        public String toString() {
+            return x +";"+y+";"+vx+";"+vy;
+        }
     }
 }
